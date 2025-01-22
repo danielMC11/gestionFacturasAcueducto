@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8">
-	<title>Title</title>
+	<title>Home Page</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-TOP 5 GASEOSAS
-<ol>
-	<li>Coca Cola</li>
-	<li>Manzana</li>
-	<li>Colombiana</li>
-	<li>Sprite</li>
-	<li>Quatro</li>
-</ol>
+<div class="container">
+	<h1>Welcome to the Home Page!</h1>
+
+	<!-- Logout Button -->
+	<form action="#" th:action="@{/logout}" method="post" style="display:inline;">
+		<button type="submit">Logout</button>
+	</form>
+
+</div>
 </body>
 </html>

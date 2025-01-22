@@ -1,27 +1,22 @@
 package com.example.gestionAcueducto.controller;
 
 import com.example.gestionAcueducto.dto.UserInfoDTO;
-import com.example.gestionAcueducto.entity.UserInfo;
-import com.example.gestionAcueducto.service.UserInfoService;
+import com.example.gestionAcueducto.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AuthRestController {
 
-	private UserInfoService userInfoService;
+	private UserService userService;
 
-	public AuthRestController(UserInfoService userInfoService) {
-		this.userInfoService = userInfoService;
+	public AuthRestController(UserService userService) {
+		this.userService = userService;
 	}
 
-	@PostMapping("/hpta")
-	public String hpta(){
-		return "HPTA";
-	}
 	@PostMapping("/register")
 	public String crear(@RequestBody UserInfoDTO userInfoDTO){
 		try {
-			userInfoService.createUser(userInfoDTO);
+			userService.createUser(userInfoDTO);
 			return "Bien";
 		}catch (Exception e){
 			e.printStackTrace();

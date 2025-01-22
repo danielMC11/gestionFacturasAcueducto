@@ -10,6 +10,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,8 +33,16 @@ public class SecurityConfig {
 			http
 				.csrf().disable()
 				.authorizeHttpRequests((authorize) -> authorize
-					.requestMatchers("/login","/hpta").permitAll()
-					.anyRequest().authenticated()
+					.requestMatchers("/login", "/register",
+						"/forgot-password",
+						"/reset-password").permitAll()
+					.requestMatchers(
+						"/js/**",
+						"/css/**",
+						"/img/**",
+						"/webjars/**"
+					).permitAll()
+						.anyRequest().authenticated()
 				)
 				.httpBasic(Customizer.withDefaults())
 				.formLogin(form -> form.loginPage("/login")
@@ -56,4 +65,6 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
+
 }
