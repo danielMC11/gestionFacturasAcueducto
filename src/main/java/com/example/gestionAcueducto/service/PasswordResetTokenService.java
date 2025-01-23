@@ -6,6 +6,7 @@ import com.example.gestionAcueducto.entity.User;
 import com.example.gestionAcueducto.repository.PasswordResetTokenRepository;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Service
 public class PasswordResetTokenService {
 	private PasswordResetTokenRepository passwordResetTokenRepository;
+
 
 	public String createTokenForUser(User user){
 
@@ -32,8 +34,14 @@ public class PasswordResetTokenService {
 		return passwordResetTokenRepository.findByToken(token).orElse(null);
 	}
 
+	public PasswordResetToken findByUser(User user){
+		return passwordResetTokenRepository.findByUser(user).orElse(null);
+	}
+
 	public boolean isTokenExpired(PasswordResetToken passwordResetToken){
-		return passwordResetToken.getExpirationDate().isBefore(LocalDateTime.now());
+		if(passwordResetToken != null)
+			return passwordResetToken.getExpirationDate().isBefore(LocalDateTime.now());
+		return false;
 	}
 
 

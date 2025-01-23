@@ -2,6 +2,7 @@ package com.example.gestionAcueducto.controller;
 
 
 import com.example.gestionAcueducto.dto.PasswordForgotDTO;
+import com.example.gestionAcueducto.entity.PasswordResetToken;
 import com.example.gestionAcueducto.entity.User;
 import com.example.gestionAcueducto.service.EmailService;
 import com.example.gestionAcueducto.service.PasswordResetTokenService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -41,17 +43,33 @@ public class PasswordForgotController {
 	}
 
 	@PostMapping
-	public String processForgotPasswordForm(@ModelAttribute("forgotPasswordForm") @Valid PasswordForgotDTO form, BindingResult result) {
+	public String processForgotPasswordForm(@ModelAttribute("forgotPasswordForm") @Valid PasswordForgotDTO form, BindingResult result, RedirectAttributes attributes) {
 
 		if(result.hasErrors()){
-			return "password-forms/forgot-password";
+			attributes.addFlashAttribute("org.springframework.validation.BindingResult.passwordResetForm", result);
+			return "redirect:/forgot-password";
 		}
 
 		User user = userService.findByEmail(form.getEmail());
 
 		if(user == null){
-			result.rejectValue("email", null, "CORREO ELECTRONICO NO REGISTRADO");
-			return "password-forms/forgot-password";
+			attributes.addFlashAttribute("errorEmailNotFound", "Correo no registrado");
+			return "redirect:/forgot-password";
+		}
+
+
+		PasswordResetToken passwordResetToken = passwordResetTokenService.findByUser(user);
+
+		if(passwordResetToken != null){
+
+			if(!passwordResetTokenService.isTokenExpired(passwordResetToken)){
+			emailService.sendResetPasswordEmail(user.getEmail(), passwordResetToken.getToken());
+
+			attributes.addFlashAttribute("passwordResetWarning", "Se ha reenviado tu link de restablecimiento!");
+			return "redirect:/forgot-password";
+			}
+			passwordResetTokenService.deleteToken(passwordResetToken);
+
 		}
 
 		String token = passwordResetTokenService.createTokenForUser(user);
