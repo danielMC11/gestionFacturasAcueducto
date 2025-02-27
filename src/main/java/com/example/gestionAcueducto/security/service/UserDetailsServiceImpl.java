@@ -1,4 +1,4 @@
-package com.example.gestionAcueducto.service;
+package com.example.gestionAcueducto.security.service;
 
 import com.example.gestionAcueducto.entity.User;
 import com.example.gestionAcueducto.enums.UserRole;

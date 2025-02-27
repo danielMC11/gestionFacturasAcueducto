@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/reset-password")
 @AllArgsConstructor
 public class PasswordResetController {
+	/*
 
 	private UserService userService;
 	private PasswordResetTokenService passwordResetTokenService;
@@ -72,5 +73,5 @@ public class PasswordResetController {
 
 		return "redirect:/login?resetSuccess";
 	}
-
+*/
 }

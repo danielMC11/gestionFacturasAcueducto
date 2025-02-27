@@ -25,6 +25,7 @@ import java.util.Optional;
 @RequestMapping("/forgot-password")
 @Controller
 public class PasswordForgotController {
+	/*
 
 	private UserService userService;
 	private PasswordResetTokenService passwordResetTokenService;
@@ -81,7 +82,7 @@ public class PasswordForgotController {
 	}
 
 
-
+*/
 
 
 }
