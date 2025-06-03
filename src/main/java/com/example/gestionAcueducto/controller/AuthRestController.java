@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,6 +97,8 @@ public class AuthRestController {
 				userService.findByEmail(userDetails.getUsername())
 		);
 
+		SecurityContextHolder.clearContext();
+
 		return ResponseEntity.ok()
 				.header(HttpHeaders.SET_COOKIE, accessCookie.toString())
 				.header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
@@ -115,6 +118,18 @@ public class AuthRestController {
 			e.printStackTrace();
 			return "mal";
 		}
+	}
+
+
+	@GetMapping("data")
+	public ResponseEntity<List<String>> testData(){
+		List<String> data = new ArrayList<String>(List.of(
+				"Lio mesi",
+				"Lamine Yamal",
+				"Cole palmer"
+		));
+
+		return ResponseEntity.ok(data);
 	}
 
 

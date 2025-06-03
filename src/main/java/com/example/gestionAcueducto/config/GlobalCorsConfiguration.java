@@ -12,7 +12,7 @@ public class GlobalCorsConfiguration implements WebMvcConfigurer {
         registry.addMapping("/**") // Esto aplica a todas las rutas
                 .allowedOrigins("http://localhost:5173") // Origenes permitidos
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos HTTP permitidos
-                .allowedHeaders("*") // Cabeceras permitidas
+                .allowedHeaders("*")// Cabeceras permitidas
                 .allowCredentials(true) // Si se permite enviar cookies
                 .maxAge(3600*3); // Tiempo máximo que los navegadores deben cachear la respuesta de preflight
     }

@@ -70,9 +70,10 @@ public class JwtUtils {
 
     public ResponseCookie cleanAccessToken(){
         return ResponseCookie.from(JWT_ACCESS_COOKIE_NAME, null)
+                .path("/")
                 .maxAge(0)
                 .sameSite("Lax")  // Required for cross-site cookies (must also use Secure)
-                .secure(true)
+                .secure(false)
                 .build();
     }
 
@@ -83,9 +84,10 @@ public class JwtUtils {
         );
 
         return ResponseCookie.from(JWT_REFRESH_COOKIE_NAME, null)
+                .path("/auth/refresh")
                 .maxAge(0)
                 .sameSite("Lax")  // Required for cross-site cookies (must also use Secure)
-                .secure(true)
+                .secure(false)
                 .build();
     }
 
@@ -95,7 +97,17 @@ public class JwtUtils {
                 .path("/")
                 .httpOnly(true)
                 .sameSite("Lax")  // Required for cross-site cookies (must also use Secure)
-                .secure(true)
+                .secure(false)
+                .build();
+    }
+
+    public ResponseCookie generateRefreshCookie(String email) {
+        String refreshToken = generateRefreshToken(email);
+        return ResponseCookie.from(JWT_REFRESH_COOKIE_NAME, refreshToken)
+                .path("/auth/refresh")
+                .httpOnly(true)
+                .sameSite("Lax")  // Required for cross-site cookies (must also use Secure)
+                .secure(false)
                 .build();
     }
 
@@ -116,16 +128,6 @@ public class JwtUtils {
                 .compact();
     }
 
-
-    public ResponseCookie generateRefreshCookie(String email) {
-        String refreshToken = generateRefreshToken(email);
-        return ResponseCookie.from(JWT_REFRESH_COOKIE_NAME, refreshToken)
-                .path("/auth/refresh")
-                .httpOnly(true)
-                .sameSite("Lax")  // Required for cross-site cookies (must also use Secure)
-                .secure(true)
-                .build();
-    }
 
 
     /***/
@@ -184,12 +186,16 @@ public class JwtUtils {
     }
 
     private Claims getAllClaims(String token) {
-        return Jwts
-                .parser()
-                .verifyWith(getKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            return Jwts
+                    .parser()
+                    .verifyWith(getKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();  // Return the claims even if the token is expired
+        }
     }
 
     public <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
