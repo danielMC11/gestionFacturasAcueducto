@@ -1,4 +1,4 @@
-package com.example.gestionAcueducto.dto;
+package com.example.gestionAcueducto.dto.passwords;
 
 
 import com.example.gestionAcueducto.validator.PasswordConfirmation;

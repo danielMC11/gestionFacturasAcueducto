@@ -1,8 +1,11 @@
 package com.example.gestionAcueducto.service;
 
 
+import com.example.gestionAcueducto.exceptions.domain.EmailSendException;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -16,11 +19,11 @@ import java.util.Map;
 
 @AllArgsConstructor
 @Service
-public class EmailService {
+public class EmailServiceImpl implements EmailService{
 
-	private JavaMailSender emailSender;
+	private final JavaMailSender emailSender;
 
-	private TemplateEngine templateEngine;
+	private final TemplateEngine templateEngine;
 
 
 	public void sendResetPasswordEmail(String email, String token){
@@ -38,16 +41,19 @@ public class EmailService {
 			context.setVariables(model);
 			String html = templateEngine.process("email/email-template", context);
 
-			helper.setFrom("danielcarrillo3200@gmail.com");
+			helper.setFrom("danycmontero@gmail.com");
 			helper.setTo(email);
 			helper.setSubject("RESET PASSWORD");
 			helper.setText(html, true);
 
 			emailSender.send(message);
 		} catch (Exception e){
-			throw new RuntimeException(e);
+			throw new EmailSendException("Error al enviar correo", e);
 		}
 	}
+
+
+
 
 
 }

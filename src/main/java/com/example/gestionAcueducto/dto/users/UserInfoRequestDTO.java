@@ -1,18 +1,18 @@
-package com.example.gestionAcueducto.dto;
+package com.example.gestionAcueducto.dto.users;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.springframework.stereotype.Service;
 
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfoDTO {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserInfoRequestDTO {
 
-	private String name;
+	private String firstName;
 	private String lastName;
 	private String email;
 	private String password;

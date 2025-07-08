@@ -1,14 +1,17 @@
 package com.example.gestionAcueducto.controller;
 
+import com.example.gestionAcueducto.dto.RefreshDTO;
 import com.example.gestionAcueducto.dto.authentication.LoginRequest;
-import com.example.gestionAcueducto.dto.UserInfoDTO;
+import com.example.gestionAcueducto.dto.users.UserInfoRequestDTO;
 import com.example.gestionAcueducto.dto.authentication.UserInfoResponse;
+import com.example.gestionAcueducto.entity.RefreshToken;
+import com.example.gestionAcueducto.mapper.RefreshMapper;
+import com.example.gestionAcueducto.repository.RefreshTokenRepository;
 import com.example.gestionAcueducto.security.jwt.JwtUtils;
 import com.example.gestionAcueducto.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -33,6 +36,8 @@ public class AuthRestController {
 	private UserService userService;
 	private AuthenticationManager authenticationManager;
 	private JwtUtils jwtUtils;
+	private RefreshTokenRepository refreshTokenRepository;
+	private RefreshMapper refreshMapper;
 
 
 	@PostMapping("login")
@@ -46,7 +51,7 @@ public class AuthRestController {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		String email = userDetails.getUsername();
 
-		ResponseCookie accessCookie = jwtUtils.generateAccessCookie(email);
+			ResponseCookie accessCookie = jwtUtils.generateAccessCookie(email);
 		ResponseCookie refreshCookie = jwtUtils.generateRefreshCookie(email);
 
 		List<String> roles = userDetails.getAuthorities().stream()
@@ -60,6 +65,9 @@ public class AuthRestController {
 						userDetails.getUsername(),
 						roles));
 	}
+
+
+
 
 
 	@PostMapping("refresh")
@@ -110,14 +118,23 @@ public class AuthRestController {
 
 
 	@PostMapping("register")
-	public String crear(@RequestBody UserInfoDTO userInfoDTO){
+	public String crear(@RequestBody UserInfoRequestDTO userInfoRequestDTO){
 		try {
-			userService.createUser(userInfoDTO);
+			userService.createUser(userInfoRequestDTO);
 			return "Bien";
 		}catch (Exception e){
 			e.printStackTrace();
 			return "mal";
 		}
+	}
+
+
+	@GetMapping("test-refresh")
+	public ResponseEntity<RefreshDTO> testRefresh(){
+
+		RefreshToken refreshToken = refreshTokenRepository.findById(77L).get();
+
+		return ResponseEntity.ok(refreshMapper.toDTO(refreshToken));
 	}
 
 

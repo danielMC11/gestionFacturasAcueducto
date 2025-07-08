@@ -1,4 +1,4 @@
-package com.example.gestionAcueducto.dto;
+package com.example.gestionAcueducto.dto.passwords;
 
 
 import jakarta.validation.constraints.Email;
@@ -19,7 +19,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PasswordForgotDTO {
 	@NotBlank(message = "LA DIRECCIÓN DE CORREO ELECTRÓNICO ES REQUERIDA")
-	@Email(message = "CORREO ELECTRÓNICO INVALIDO")
+	@Email(message = "CORREO ELECTRÓNICO INVÁLIDO")
 	private String email;
-
 }

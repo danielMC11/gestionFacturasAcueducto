@@ -1,6 +1,9 @@
 package com.example.gestionAcueducto.config;
 
 import com.example.gestionAcueducto.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,10 +33,8 @@ public class ApplicationConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
-
         return authProvider;
     }
 
@@ -46,5 +47,21 @@ public class ApplicationConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public ObjectMapper objectMapper(){
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        // ===> REGISTRAR EL MÓDULO PARA FECHAS DE JAVA 8 <===
+        objectMapper.registerModule(new JavaTimeModule());
+
+        // Opcional: Para que las fechas se serialicen como cadenas ISO 8601 (2025-06-13T19:20:44),
+        // en lugar de como marcas de tiempo numéricas (timestamps)
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        // Puedes añadir más configuraciones aquí
+        // objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+        return objectMapper;}
 
 }

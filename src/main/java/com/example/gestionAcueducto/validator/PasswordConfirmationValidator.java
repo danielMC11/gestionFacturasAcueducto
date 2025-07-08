@@ -29,7 +29,6 @@ public class PasswordConfirmationValidator implements ConstraintValidator<Passwo
 
 			return password != null && password.equals(confirmPassword);
 		} catch (NoSuchFieldException | IllegalAccessException e) {
-
 			e.printStackTrace();
 			return false;
 		}

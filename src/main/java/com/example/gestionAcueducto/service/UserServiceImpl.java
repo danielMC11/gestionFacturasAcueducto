@@ -1,9 +1,10 @@
 package com.example.gestionAcueducto.service;
 
 
-import com.example.gestionAcueducto.dto.UserInfoDTO;
+import com.example.gestionAcueducto.dto.users.UserInfoRequestDTO;
 import com.example.gestionAcueducto.entity.User;
 import com.example.gestionAcueducto.enums.UserRole;
+import com.example.gestionAcueducto.exceptions.domain.NotFoundException;
 import com.example.gestionAcueducto.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,23 +19,23 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public void createUser(UserInfoDTO userInfoDTO){
+	public void createUser(UserInfoRequestDTO userInfoRequestDTO){
 			userRepository.save(
 				User.builder()
-					.firstName(userInfoDTO.getName())
-					.lastName(userInfoDTO.getLastName())
-					.email(userInfoDTO.getEmail())
-					.address(userInfoDTO.getAddress())
-					.phoneNumber(userInfoDTO.getPhoneNumber())
+					.firstName(userInfoRequestDTO.getFirstName())
+					.lastName(userInfoRequestDTO.getLastName())
+					.email(userInfoRequestDTO.getEmail())
+					.address(userInfoRequestDTO.getAddress())
+					.phoneNumber(userInfoRequestDTO.getPhoneNumber())
 					.role(UserRole.PERSON)
-					.password(passwordEncoder.encode(userInfoDTO.getPassword()))
+					.password(passwordEncoder.encode(userInfoRequestDTO.getPassword()))
 					.build()
 			);
 	}
 
 	@Override
 	public User findByEmail(String email){
-		return userRepository.findByEmail(email).orElse(null);
+		return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("CORREO ELECTRÓNICO NO REGISTRADO"));
 	}
 
 	@Override

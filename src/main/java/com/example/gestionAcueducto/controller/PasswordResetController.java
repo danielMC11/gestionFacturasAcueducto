@@ -1,18 +1,8 @@
 package com.example.gestionAcueducto.controller;
 
-import com.example.gestionAcueducto.dto.PasswordResetDTO;
-import com.example.gestionAcueducto.entity.PasswordResetToken;
-import com.example.gestionAcueducto.entity.User;
-import com.example.gestionAcueducto.service.PasswordResetTokenService;
-import com.example.gestionAcueducto.service.UserService;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller

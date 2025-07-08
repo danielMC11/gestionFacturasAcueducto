@@ -30,9 +30,6 @@ public class PasswordResetTokenService {
 			return passwordResetToken.getToken();
 	}
 
-	public PasswordResetToken findByToken(String token){
-		return passwordResetTokenRepository.findByToken(token).orElse(null);
-	}
 
 	public PasswordResetToken findByUser(User user){
 		return passwordResetTokenRepository.findByUser(user).orElse(null);
