@@ -1,67 +1,46 @@
 package com.example.gestionAcueducto.controller;
 
+import com.example.gestionAcueducto.dto.SimpleMessageDTO;
+import com.example.gestionAcueducto.dto.passwords.PasswordResetDTO;
+import com.example.gestionAcueducto.entity.PasswordResetToken;
+import com.example.gestionAcueducto.entity.User;
+import com.example.gestionAcueducto.exceptions.domain.TokenExpiredException;
+import com.example.gestionAcueducto.service.PasswordResetTokenService;
+import com.example.gestionAcueducto.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-@Controller
+
 @RequestMapping("/reset-password")
 @AllArgsConstructor
+@RestController
 public class PasswordResetController {
-	/*
+
 
 	private UserService userService;
 	private PasswordResetTokenService passwordResetTokenService;
 
 
-	@ModelAttribute("passwordResetForm")
-	public PasswordResetDTO passwordResetDTO(){
-		return new PasswordResetDTO();
-	}
-
-	@GetMapping
-	public String displayResetPasswordPage(@RequestParam(required = false) String token,
-																				 Model model, RedirectAttributes attributes) {
-
-		PasswordResetToken passwordResetToken = passwordResetTokenService.findByToken(token);
-
-		if(passwordResetToken == null){
-			model.addAttribute("errorToken", "EL TOKEN NO EXISTE");
-			return "password-forms/token-failed";
-		} else if(passwordResetTokenService.isTokenExpired(passwordResetToken)){
-			model.addAttribute("errorToken", "EL TOKEN HA EXPIRADO");
-			return "password-forms/token-failed";
-		} else {
-			model.addAttribute("token", token);
-		}
-
-		if (!model.containsAttribute("passwordResetForm")) {
-			model.addAttribute("passwordResetForm", new PasswordResetDTO());
-		}
-
-		return "password-forms/reset-password";
-	}
-
 	@PostMapping
-	@Transactional
-	public String handlePasswordReset(@ModelAttribute("passwordResetForm") @Valid PasswordResetDTO form, BindingResult result, RedirectAttributes attributes) {
+	public ResponseEntity<SimpleMessageDTO> handlePasswordReset(@Valid @RequestBody PasswordResetDTO passwordResetDTO) {
 
-		if(result.hasErrors()){
 
-			attributes.addFlashAttribute("org.springframework.validation.BindingResult.passwordResetForm", result);
-			attributes.addFlashAttribute("passwordResetForm", form);
+		PasswordResetToken passwordResetToken = passwordResetTokenService.findByToken(passwordResetDTO.getToken());
 
-			return "redirect:/reset-password?token=" + form.getToken();
+		if(passwordResetTokenService.isTokenExpired(passwordResetToken)){
+			passwordResetTokenService.deleteToken(passwordResetToken);
+			throw new TokenExpiredException("EL TOKEN DE RESTABLECIMIENTO ESTÁ VENCIDO, SOLICITE UN NUEVO CORREO DE RECUPERACIÓN");
 		}
-
-		PasswordResetToken passwordResetToken = passwordResetTokenService.findByToken(form.getToken());
 
 		User user = passwordResetToken.getUser();
-		userService.updatePassword(form.getPassword(), user.getUserId());
+		userService.updatePassword(passwordResetDTO.getPassword(), user.getUserId());
+
 		passwordResetTokenService.deleteToken(passwordResetToken);
 
-		return "redirect:/login?resetSuccess";
+		return ResponseEntity.ok(new SimpleMessageDTO("CONTRASEÑA RESTABLECIDA EXITOSAMENTE!"));
 	}
-*/
+
 }

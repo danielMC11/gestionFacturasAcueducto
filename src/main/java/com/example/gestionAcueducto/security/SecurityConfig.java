@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	private final String[] WHITE_LIST_URL = {"/auth/login", "/auth/register", "/auth/test-refresh", "/forgot-password"};
+	private final String[] WHITE_LIST_URL = {"/auth/login", "/auth/register", "/auth/test-refresh", "/forgot-password", "/reset-password"};
 	private final CustomUnauthorizedHandler customUnauthorizedHandler;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final AuthenticationProvider authenticationProvider;

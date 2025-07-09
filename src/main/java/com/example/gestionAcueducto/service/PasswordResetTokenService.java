@@ -3,6 +3,7 @@ package com.example.gestionAcueducto.service;
 import com.example.gestionAcueducto.entity.PasswordResetToken;
 import com.example.gestionAcueducto.entity.User;
 
+import com.example.gestionAcueducto.exceptions.domain.NotFoundException;
 import com.example.gestionAcueducto.repository.PasswordResetTokenRepository;
 
 import lombok.AllArgsConstructor;
@@ -28,6 +29,11 @@ public class PasswordResetTokenService {
 					.build()
 			);
 			return passwordResetToken.getToken();
+	}
+
+
+	public PasswordResetToken findByToken(String token){
+		return passwordResetTokenRepository.findByToken(token).orElseThrow(() -> new NotFoundException("TOKEN NO REGISTRADO"));
 	}
 
 

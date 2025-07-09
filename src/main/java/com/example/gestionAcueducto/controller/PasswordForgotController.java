@@ -26,7 +26,7 @@ public class PasswordForgotController {
 
 
 	@PostMapping
-	public ResponseEntity<SimpleMessageDTO> processForgotPasswordForm(@Valid @RequestBody PasswordForgotDTO passwordForgotDTO) {
+	public ResponseEntity<SimpleMessageDTO> processForgotPassword(@Valid @RequestBody PasswordForgotDTO passwordForgotDTO) {
 
 		User user = userService.findByEmail(passwordForgotDTO.getEmail());
 

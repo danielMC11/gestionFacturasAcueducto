@@ -9,6 +9,7 @@ import com.example.gestionAcueducto.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
 @Service
@@ -38,6 +39,7 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("CORREO ELECTRÓNICO NO REGISTRADO"));
 	}
 
+	@Transactional
 	@Override
 	public void updatePassword(String newPassword, Long userId){
 		userRepository.updatePassword(passwordEncoder.encode(newPassword), userId);
