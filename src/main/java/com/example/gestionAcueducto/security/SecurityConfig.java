@@ -16,6 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
+import static com.example.gestionAcueducto.enums.UserRole.PERSON;
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class SecurityConfig {
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final AuthenticationProvider authenticationProvider;
 	private final JwtTokenFilter jwtTokenFilter;
+	private final ExceptionHandlerFilter exceptionHandlerFilter;
 
 
 	@Bean
@@ -39,10 +42,11 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(request -> {
 					request.requestMatchers(WHITE_LIST_URL).permitAll();
-					//request.requestMatchers("/auth/data").hasRole(ADMIN.name());
+					request.requestMatchers("/auth/data").hasRole(PERSON.name());
 					request.anyRequest().authenticated();
 				})
-				.addFilterAfter(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
 				.authenticationProvider(authenticationProvider);
 		return http.build();
 	}

@@ -1,6 +1,7 @@
 package com.example.gestionAcueducto.controller;
 
 import com.example.gestionAcueducto.dto.RefreshDTO;
+import com.example.gestionAcueducto.dto.SimpleMessageDTO;
 import com.example.gestionAcueducto.dto.authentication.LoginRequest;
 import com.example.gestionAcueducto.dto.users.UserInfoRequestDTO;
 import com.example.gestionAcueducto.dto.authentication.UserInfoResponse;
@@ -41,7 +42,7 @@ public class AuthRestController {
 
 
 	@PostMapping("login")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<UserInfoResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -71,7 +72,7 @@ public class AuthRestController {
 
 
 	@PostMapping("refresh")
-	public ResponseEntity<?> refresh(HttpServletRequest request) {
+	public ResponseEntity<UserInfoResponse> refresh(HttpServletRequest request) {
 		String refreshToken = jwtUtils.getRefreshTokenFromCookie(request);
 
 		if(jwtUtils.isRefreshToken(refreshToken) && !jwtUtils.isTokenExpired(refreshToken)){
@@ -98,7 +99,7 @@ public class AuthRestController {
 
 
 	@PostMapping("logout")
-	public ResponseEntity<?> logout(){
+	public ResponseEntity<SimpleMessageDTO> logout(){
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		ResponseCookie accessCookie= jwtUtils.cleanAccessToken();
 		ResponseCookie refreshCookie = jwtUtils.cleanRefreshToken(
@@ -111,7 +112,7 @@ public class AuthRestController {
 				.header(HttpHeaders.SET_COOKIE, accessCookie.toString())
 				.header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
 				.body(
-						"Logout successful"
+						new SimpleMessageDTO("Lougout exitoso!")
 				);
 
 	}
@@ -126,27 +127,6 @@ public class AuthRestController {
 			e.printStackTrace();
 			return "mal";
 		}
-	}
-
-
-	@GetMapping("test-refresh")
-	public ResponseEntity<RefreshDTO> testRefresh(){
-
-		RefreshToken refreshToken = refreshTokenRepository.findById(77L).get();
-
-		return ResponseEntity.ok(refreshMapper.toDTO(refreshToken));
-	}
-
-
-	@GetMapping("data")
-	public ResponseEntity<List<String>> testData(){
-		List<String> data = new ArrayList<String>(List.of(
-				"Lio mesi",
-				"Lamine Yamal",
-				"Cole palmer"
-		));
-
-		return ResponseEntity.ok(data);
 	}
 
 

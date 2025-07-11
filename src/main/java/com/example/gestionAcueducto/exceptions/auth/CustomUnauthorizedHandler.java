@@ -30,7 +30,7 @@ public class CustomUnauthorizedHandler implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException {
-        logger.error("Unauthorized error: {}", authException.getMessage());
+        logger.error("ERROR DE AUTENTICACIÓN: {}", authException.getMessage());
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value()); // Código 401
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

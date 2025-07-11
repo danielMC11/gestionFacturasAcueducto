@@ -30,7 +30,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
 
-        logger.error("Forbidden error: {}", accessDeniedException.getMessage());
+        logger.error("ERROR ACCESO DENEGADO: {}", accessDeniedException.getMessage());
 
         response.setStatus(HttpStatus.FORBIDDEN.value()); // Código 403
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
