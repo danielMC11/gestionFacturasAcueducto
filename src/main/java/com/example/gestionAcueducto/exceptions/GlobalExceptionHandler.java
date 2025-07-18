@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -21,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -50,10 +54,10 @@ public class GlobalExceptionHandler {
         }
 
 
-        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        ErrorResponse errorResponse = new ErrorResponse(httpStatus,  errorMessage, request.getRequestURI());
 
-        return ResponseEntity.status(httpStatus).body(errorResponse);
+        ErrorResponse errorResponse = new ErrorResponse(errorMessage, request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
 
@@ -63,14 +67,14 @@ public class GlobalExceptionHandler {
 
         String errorMessage = String.format("El recurso solicitado '%s' no fue encontrado.", ex.getRequestURL());
 
-        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-        ErrorResponse errorResponse = new ErrorResponse(httpStatus, errorMessage, ex.getRequestURL());
+
+        ErrorResponse errorResponse = new ErrorResponse(errorMessage, ex.getRequestURL());
 
         // 5. Loggear este error como INFO o WARN, ya que es un error del cliente (recurso no existe)
         logger.warn("Recurso no encontrado: {}. URI: {}", errorMessage, request.getRequestURI());
 
 
-        return ResponseEntity.status(httpStatus).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -81,14 +85,13 @@ public class GlobalExceptionHandler {
                 ex.getMethod(),
                 ex.getSupportedHttpMethods() != null ? ex.getSupportedHttpMethods() : "N/A");
 
-        HttpStatus httpStatus = HttpStatus.METHOD_NOT_ALLOWED;
-        ErrorResponse errorResponse = new ErrorResponse(httpStatus,  errorMessage, request.getRequestURI());
+        ErrorResponse errorResponse = new ErrorResponse(errorMessage, request.getRequestURI());
 
         // 6. Loggear este error como WARN, ya que es un error del cliente (método incorrecto)
         logger.warn("Método HTTP no soportado: {}. URI: {}", errorMessage, request.getRequestURI());
 
 
-        return ResponseEntity.status(httpStatus).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -111,12 +114,44 @@ public class GlobalExceptionHandler {
             }
         });
 
-        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+
 
         // 9. Loggear un resumen de los errores de validación
         logger.warn("Errores de validación de argumentos: {}", errors);
 
-        return ResponseEntity.status(httpStatus).body(errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String errorMessage = "Ocurrió un error inesperado.";
+
+        if (ex.getCause() != null && ex.getCause().getMessage() != null) {
+
+            String causeMessage = ex.getCause().getMessage();
+
+
+            if (causeMessage.contains("llave duplicada viola restricción de unicidad")) {
+                Pattern duplicatePattern = Pattern.compile("\\((.*?)\\)=\\((.*?)\\)");
+                Matcher duplicateMatcher = duplicatePattern.matcher(causeMessage);
+
+                if (duplicateMatcher.find()) {
+                    String fieldValue = duplicateMatcher.group(2);
+                    errorMessage = String.format("El valor '%s' ya existe. Por favor, ingrese uno diferente.", fieldValue);
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(errorMessage));
+                }
+            }
+
+            // 2. Manejo de error para valores nulos (basado en el mensaje en español)
+            if (causeMessage.contains("valor nulo en la columna")) {
+                errorMessage = "No se permiten datos vacíos en los campos obligatorios.";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(errorMessage));
+            }
+        }
+
+        ErrorResponse errorResponse = new ErrorResponse(errorMessage);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     //Auth
@@ -126,13 +161,12 @@ public class GlobalExceptionHandler {
             BadCredentialsException ex, HttpServletRequest request) {
 
         String errorMessage = "Credenciales de autenticación inválidas.";
-        HttpStatus httpStatus = HttpStatus.UNAUTHORIZED; // 401 Unauthorized
 
-        ErrorResponse errorResponse = new ErrorResponse(httpStatus, errorMessage, request.getRequestURI());
+        ErrorResponse errorResponse = new ErrorResponse(errorMessage, request.getRequestURI());
 
         logger.warn("Intento de autenticación fallido por credenciales inválidas. URI: {}", request.getRequestURI());
 
-        return ResponseEntity.status(httpStatus).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
 
@@ -142,7 +176,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ErrorResponse> handleBaseException(
             BaseException ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getStatus(),  ex.getMessage(), request.getRequestURI());
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), request.getRequestURI());
         // 10. Loggear excepciones de dominio (custom) con el nivel de error apropiado
         // Si BaseException es un error de negocio esperado (ej. usuario no encontrado), quizás WARN sea suficiente
         // Si indica un fallo en la lógica de negocio, ERROR es mejor.
@@ -155,13 +189,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex,  HttpServletRequest request){
 
-        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        ErrorResponse errorResponse = new ErrorResponse(httpStatus,  "Ha ocurrido un error inesperado", request.getRequestURI());
+        ErrorResponse errorResponse = new ErrorResponse("Ha ocurrido un error inesperado", request.getRequestURI());
 
         // 11. Loggear la excepción genérica (catch-all) a nivel ERROR, incluyendo el stack trace
         logger.error("Error inesperado en la aplicación. URI: {}", request.getRequestURI(), ex);
 
-        return ResponseEntity.status(httpStatus).body(errorResponse);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

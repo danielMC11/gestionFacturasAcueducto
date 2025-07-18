@@ -1,18 +1,16 @@
 package com.example.gestionAcueducto.security.jwt;
 
-import com.example.gestionAcueducto.entity.RefreshToken;
-import com.example.gestionAcueducto.entity.User;
-import com.example.gestionAcueducto.repository.RefreshTokenRepository;
-import com.example.gestionAcueducto.repository.UserRepository;
+import com.example.gestionAcueducto.auth.entity.RefreshToken;
+import com.example.gestionAcueducto.users.entity.User;
+import com.example.gestionAcueducto.auth.repository.RefreshTokenRepository;
+import com.example.gestionAcueducto.users.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -27,13 +25,18 @@ import java.util.function.Function;
 
 
 @Component
+
 public class JwtUtils {
 
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+
+    public JwtUtils(RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.userRepository = userRepository;
+    }
 
     @Value("${jwt.access.cookie.name}")
     private String JWT_ACCESS_COOKIE_NAME;
@@ -80,7 +83,7 @@ public class JwtUtils {
     public ResponseCookie cleanRefreshToken(User user){
 
         refreshTokenRepository.findByUser(user).ifPresent(
-                refreshToken -> refreshTokenRepository.delete(refreshToken)
+                refreshTokenRepository::delete
         );
 
         return ResponseCookie.from(JWT_REFRESH_COOKIE_NAME, null)

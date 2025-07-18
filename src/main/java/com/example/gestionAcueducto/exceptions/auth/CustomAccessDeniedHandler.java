@@ -37,7 +37,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         String path = request.getRequestURI();
         ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.FORBIDDEN,
                 "No tienes permiso para acceder a este recurso.",
                 path
         );

@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
+import static com.example.gestionAcueducto.enums.UserRole.ADMIN;
 import static com.example.gestionAcueducto.enums.UserRole.PERSON;
 
 
@@ -24,7 +25,7 @@ import static com.example.gestionAcueducto.enums.UserRole.PERSON;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	private final String[] WHITE_LIST_URL = {"/auth/login", "/auth/register", "/auth/test-refresh", "/forgot-password", "/reset-password"};
+	private final String[] WHITE_LIST_URL = {"/api/v1/**"};
 	private final CustomUnauthorizedHandler customUnauthorizedHandler;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final AuthenticationProvider authenticationProvider;
@@ -42,7 +43,7 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(request -> {
 					request.requestMatchers(WHITE_LIST_URL).permitAll();
-					request.requestMatchers("/auth/data").hasRole(PERSON.name());
+					//request.requestMatchers("/api/v1/users/**").hasRole(ADMIN.name());
 					request.anyRequest().authenticated();
 				})
 				.addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)

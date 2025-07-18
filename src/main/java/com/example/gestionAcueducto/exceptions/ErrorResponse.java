@@ -13,19 +13,22 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private final LocalDateTime timestamp;
-    private final int status;
-    private final String error;
+
     private final String message;
     private final String path;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private final LocalDateTime timestamp;
 
-    public ErrorResponse(HttpStatus status, String message, String path) {
-        this.timestamp = LocalDateTime.now();
-        this.status = status.value();
-        this.error = status.getReasonPhrase(); // Obtiene la frase de razón del HttpStatus (ej. "Not Found")
+    public ErrorResponse(String message, String path) {
         this.message = message;
         this.path = path;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    public ErrorResponse(String message) {
+        this.message = message;
+        this.path = null;
+        this.timestamp = LocalDateTime.now();
     }
 
 

@@ -37,7 +37,6 @@ public class CustomUnauthorizedHandler implements AuthenticationEntryPoint {
 
         String path = request.getRequestURI(); // Obtener la ruta de la solicitud
         ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.UNAUTHORIZED,
                 "Necesitas autenticarte para acceder a este recurso.",
                 path
         );
