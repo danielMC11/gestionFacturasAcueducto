@@ -19,13 +19,13 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 	private PasswordResetTokenRepository passwordResetTokenRepository;
 
 
-	public String createTokenForUser(User user){
+	public String createTokenForUser(User user, int minutes) {
 
 			PasswordResetToken passwordResetToken = passwordResetTokenRepository.save(
 				PasswordResetToken.builder()
 					.user(user)
 					.token(UUID.randomUUID().toString())
-					.expirationDate(LocalDateTime.now().plusMinutes(5))
+					.expirationDate(LocalDateTime.now().plusMinutes(minutes))
 					.build()
 			);
 			return passwordResetToken.getToken();

@@ -4,6 +4,9 @@ package com.example.gestionAcueducto.users.mapper;
 import com.example.gestionAcueducto.users.dto.UserDTO;
 import com.example.gestionAcueducto.users.entity.User;
 import org.mapstruct.*;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

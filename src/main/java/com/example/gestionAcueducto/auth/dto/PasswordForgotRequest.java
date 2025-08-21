@@ -12,11 +12,8 @@ import lombok.Setter;
 
 
 
-@Setter
-@Getter
-@NoArgsConstructor
-public class PasswordForgotRequest {
-	@NotBlank(message = "LA DIRECCIÓN DE CORREO ELECTRÓNICO ES REQUERIDA")
-	@Email(message = "CORREO ELECTRÓNICO INVÁLIDO")
-	private String email;
-}
+public record PasswordForgotRequest(
+		@NotBlank(message = "La dirección de correo electrónico es requerida")
+		@Email(message = "Correo electrónico inválido")
+		String email
+){}

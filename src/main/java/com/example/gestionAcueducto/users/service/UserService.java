@@ -1,10 +1,14 @@
 package com.example.gestionAcueducto.users.service;
 
+import com.example.gestionAcueducto.users.enums.RoleName;
 import com.example.gestionAcueducto.users.dto.UserDTO;
 import com.example.gestionAcueducto.users.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
-	UserDTO createUser(UserDTO userDTO);
+
+	UserDTO createUser(UserDTO userDTO, RoleName roleName);
 
 	UserDTO updateUser(Long id, UserDTO userDTO);
 
@@ -15,4 +19,7 @@ public interface UserService {
 	User findByEmail(String email);
 
 	void updatePassword(String newPassword, Long userId);
+
+	Page<UserDTO> findAll(Pageable pageable);
+
 }

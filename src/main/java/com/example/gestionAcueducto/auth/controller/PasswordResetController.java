@@ -28,7 +28,7 @@ public class PasswordResetController {
 	public ResponseEntity<SimpleMessageDTO> handlePasswordReset(@Valid @RequestBody PasswordResetRequest passwordResetRequest) {
 
 
-		PasswordResetToken passwordResetToken = passwordResetTokenService.findByToken(passwordResetRequest.getToken());
+		PasswordResetToken passwordResetToken = passwordResetTokenService.findByToken(passwordResetRequest.token());
 
 		if(passwordResetTokenService.isTokenExpired(passwordResetToken)){
 			passwordResetTokenService.deleteToken(passwordResetToken);
@@ -36,7 +36,7 @@ public class PasswordResetController {
 		}
 
 		User user = passwordResetToken.getUser();
-		userService.updatePassword(passwordResetRequest.getPassword(), user.getId());
+		userService.updatePassword(passwordResetRequest.password(), user.getId());
 
 		passwordResetTokenService.deleteToken(passwordResetToken);
 

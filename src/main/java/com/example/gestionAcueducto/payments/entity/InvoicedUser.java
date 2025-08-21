@@ -1,7 +1,7 @@
 package com.example.gestionAcueducto.payments.entity;
 
 
-import com.example.gestionAcueducto.enums.InvoiceStatus;
+import com.example.gestionAcueducto.invoices.enums.InvoiceStatus;
 import com.example.gestionAcueducto.invoices.entity.Invoice;
 import com.example.gestionAcueducto.users.entity.User;
 import jakarta.persistence.*;

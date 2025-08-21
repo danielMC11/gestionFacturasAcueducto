@@ -9,21 +9,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-@Getter
-@Setter
-@NoArgsConstructor
-@PasswordConfirmation(password = "password", confirmPassword = "confirmPassword")
 
-public class PasswordResetRequest {
+@PasswordConfirmation(password = "password", confirmPassword = "confirmPassword")
+public record PasswordResetRequest (
 
 	@Size(min=8, max=32, message = "La constraseña debe ser al menos de 8 caracteres")
 	@NotBlank(message = "La contraseña no puede ser vacía")
-	private String password;
+	String password,
 
 	@NotBlank(message = "La contraseña no puede ser vacía")
-	private String confirmPassword;
+	String confirmPassword,
 
 	@NotBlank(message =  "El token no puede ser vacío")
-	private String token;
-
-}
+	String token
+){}

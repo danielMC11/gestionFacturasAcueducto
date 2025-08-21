@@ -5,7 +5,7 @@ import com.example.gestionAcueducto.users.entity.User;
 
 public interface PasswordResetTokenService {
 
-    String createTokenForUser(User user);
+    String createTokenForUser(User user, int minutes);
 
     PasswordResetToken findByToken(String token);
 

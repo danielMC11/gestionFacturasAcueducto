@@ -14,10 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 
-import static com.example.gestionAcueducto.enums.UserRole.ADMIN;
-import static com.example.gestionAcueducto.enums.UserRole.PERSON;
 
 
 @Configuration

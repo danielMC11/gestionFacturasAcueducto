@@ -7,11 +7,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class LoginResponse {
-    private String email;
-    private List<String> roles;
-}
+public record LoginResponse (
+        String email,
+        List<String> roles
+){}

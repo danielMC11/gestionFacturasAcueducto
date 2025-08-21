@@ -1,4 +1,4 @@
-package com.example.gestionAcueducto.enums;
+package com.example.gestionAcueducto.invoices.enums;
 
 public enum InvoiceStatus {
     PENDING,

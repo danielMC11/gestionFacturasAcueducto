@@ -9,14 +9,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class LoginRequest {
-    @Email
-    @NotBlank
-    private String email;
-    @NotBlank
-    private String password;
-}
+public record LoginRequest (
+
+        @NotBlank(message = "La dirección de correo electrónico es requerida")
+        @Email(message = "Correo electrónico inválido")
+        String email,
+        @NotBlank(message = "La contraseña es requerida")
+        String password
+){}

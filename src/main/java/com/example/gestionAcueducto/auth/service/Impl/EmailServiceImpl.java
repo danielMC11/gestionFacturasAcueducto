@@ -25,7 +25,7 @@ public class EmailServiceImpl implements EmailService {
 	private final TemplateEngine templateEngine;
 
 
-	public void sendResetPasswordEmail(String email, String token){
+	public void sendResetPasswordEmail(String email, String templateName, String token){
 		try {
 			MimeMessage message = emailSender.createMimeMessage();
 
@@ -38,7 +38,7 @@ public class EmailServiceImpl implements EmailService {
 
 			Context context = new Context();
 			context.setVariables(model);
-			String html = templateEngine.process("email/email-template", context);
+			String html = templateEngine.process("email/" + templateName, context);
 
 			helper.setFrom("danycmontero@gmail.com");
 			helper.setTo(email);
