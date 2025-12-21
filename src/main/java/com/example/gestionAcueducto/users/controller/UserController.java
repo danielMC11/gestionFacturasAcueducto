@@ -23,6 +23,11 @@ public class UserController {
 
     private final UserService userService;
 
+    @PostMapping("register-owner")
+    public ResponseEntity<UserDTO> createOwner(@Valid @RequestBody UserDTO userDTO){
+        return ResponseEntity.ok(userService.createUser(userDTO, RoleName.OWNER));
+    }
+
     @PostMapping("register-admin")
     public ResponseEntity<UserDTO> createAdmin(@Valid @RequestBody UserDTO userDTO){
         return ResponseEntity.ok(userService.createUser(userDTO, RoleName.ADMIN));

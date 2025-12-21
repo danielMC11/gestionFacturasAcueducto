@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_db_prod
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: acueducto_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres-password
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - acueducto_network_prod
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d acueducto_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    secrets:
+      - postgres-password
+
+  app:
+    build: .
+    container_name: gestion_acueducto_app
+    ports:
+      - "8090:9090"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/acueducto_db
+      SPRING_DATASOURCE_USERNAME: postgres
+
+    networks:
+      - acueducto_network_prod
+    depends_on:
+      postgres:
+        condition: service_healthy
+    secrets:
+      - postgres-password
+      - jwt-key
+      - gmail-username
+      - gmail-password
+
+networks:
+  acueducto_network_prod:
+
+volumes:
+  postgres_data_prod:
+
+secrets:
+  postgres-password:
+    environment: "POSTGRES_PASSWORD"
+  jwt-key:
+    environment: "JWT_KEY"
+  gmail-username:
+    environment: "GMAIL_USERNAME"
+  gmail-password:
+    environment: "GMAIL_PASSWORD"

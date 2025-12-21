@@ -35,7 +35,7 @@ public class Invoice {
     private Integer consecutiveNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invoice_issuer_id ")
+    @JoinColumn(name = "invoice_issuer_id")
     private InvoiceIssuer invoiceIssuer;
 
     @ManyToOne(fetch = FetchType.LAZY)

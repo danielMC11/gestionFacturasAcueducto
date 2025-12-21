@@ -37,7 +37,7 @@ public class User implements UserDetails {
 	@Column(length = 50, nullable = false)
 	private String lastName;
 
-	@Column(length = 10, nullable = false, unique = true)
+	@Column(length = 10, unique = true)
 	private String document;
 
 	@Column(nullable = false, unique = true, length = 254)
@@ -46,16 +46,17 @@ public class User implements UserDetails {
 	@Column(nullable = false)
 	private String password;
 
-	@Column(nullable = false, length = 254)
+	@Column(length = 254)
 	private String address;
 
-	@Column(nullable = false, length = 15)
+	@Column(length = 15)
 	private String phoneNumber;
 
 	@OneToOne
 	@JoinColumn(name = "role_id")
 	private Role role;
 
+	@Builder.Default
 	private boolean active = Boolean.TRUE;
 
 	@CreatedDate
