@@ -14,7 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.web.cors.CorsConfigurationSource;
 
 
 @Configuration
@@ -22,17 +22,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-	private final String[] WHITE_LIST_URL = {"/api/v1/**"};
+	private final String[] WHITE_LIST_URL = {"/api/v1/auth/login",
+			"/api/v1/auth/refresh"};
 	private final CustomUnauthorizedHandler customUnauthorizedHandler;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final AuthenticationProvider authenticationProvider;
 	private final JwtTokenFilter jwtTokenFilter;
 	private final ExceptionHandlerFilter exceptionHandlerFilter;
+	private final CorsConfigurationSource corsConfigurationSource;
 
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(AbstractHttpConfigurer::disable)
+		http
+				.cors(cors -> cors.configurationSource(corsConfigurationSource)) // Configurar CORS
+				.csrf(AbstractHttpConfigurer::disable)
 				.exceptionHandling(exceptions -> exceptions
 					.authenticationEntryPoint(customUnauthorizedHandler)
 					.accessDeniedHandler(customAccessDeniedHandler)

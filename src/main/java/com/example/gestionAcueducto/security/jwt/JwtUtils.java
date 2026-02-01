@@ -87,7 +87,7 @@ public class JwtUtils {
         );
 
         return ResponseCookie.from(JWT_REFRESH_COOKIE_NAME, null)
-                .path("/auth/refresh")
+                .path("/")
                 .maxAge(0)
                 .sameSite("Lax")  // Required for cross-site cookies (must also use Secure)
                 .secure(false)
@@ -96,8 +96,12 @@ public class JwtUtils {
 
     public ResponseCookie generateAccessCookie(String email) {
         String accessToken = generateAccessToken(email);
+
+        long maxAgeSeconds = Long.parseLong(JWT_ACCESS_EXPIRATION_MS) / 1000;
+
         return ResponseCookie.from(JWT_ACCESS_COOKIE_NAME, accessToken)
                 .path("/")
+                .maxAge(maxAgeSeconds)
                 .httpOnly(true)
                 .sameSite("Lax")  // Required for cross-site cookies (must also use Secure)
                 .secure(false)
@@ -106,8 +110,12 @@ public class JwtUtils {
 
     public ResponseCookie generateRefreshCookie(String email) {
         String refreshToken = generateRefreshToken(email);
+
+        long maxAgeSeconds = Long.parseLong(JWT_REFRESH_EXPIRATION_MS) / 1000;
+
         return ResponseCookie.from(JWT_REFRESH_COOKIE_NAME, refreshToken)
-                .path("/auth/refresh")
+                .path("/")
+                .maxAge(maxAgeSeconds)
                 .httpOnly(true)
                 .sameSite("Lax")  // Required for cross-site cookies (must also use Secure)
                 .secure(false)

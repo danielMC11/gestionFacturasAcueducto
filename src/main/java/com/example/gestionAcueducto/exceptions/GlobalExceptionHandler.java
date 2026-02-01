@@ -115,7 +115,6 @@ public class GlobalExceptionHandler {
         });
 
 
-
         // 9. Loggear un resumen de los errores de validación
         logger.warn("Errores de validación de argumentos: {}", errors);
 

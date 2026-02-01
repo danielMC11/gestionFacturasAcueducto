@@ -9,6 +9,7 @@ import com.example.gestionAcueducto.users.entity.User;
 import com.example.gestionAcueducto.auth.service.Impl.EmailServiceImpl;
 import com.example.gestionAcueducto.users.service.UserService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +21,9 @@ import org.springframework.web.bind.annotation.*;
 public class PasswordForgotController {
 
 
-	private UserService userService;
-	private PasswordResetTokenService passwordResetTokenService;
-	private EmailServiceImpl emailServiceImpl;
+	private final UserService userService;
+	private final PasswordResetTokenService passwordResetTokenService;
+	private final EmailServiceImpl emailServiceImpl;
 
 
 

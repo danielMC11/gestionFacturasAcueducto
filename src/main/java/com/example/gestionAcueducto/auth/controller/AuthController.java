@@ -1,9 +1,13 @@
 package com.example.gestionAcueducto.auth.controller;
 
 import com.example.gestionAcueducto.auth.dto.LoginRequest;
-import com.example.gestionAcueducto.auth.dto.LoginResponse;
+import com.example.gestionAcueducto.auth.dto.AuthResponse;
+import com.example.gestionAcueducto.exceptions.domain.NoRoleFoundException;
+import com.example.gestionAcueducto.exceptions.domain.NotFoundException;
 import com.example.gestionAcueducto.security.jwt.JwtUtils;
+import com.example.gestionAcueducto.users.dto.UserDTO;
 import com.example.gestionAcueducto.users.entity.User;
+import com.example.gestionAcueducto.users.mapper.UserMapper;
 import com.example.gestionAcueducto.users.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -16,11 +20,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -32,11 +40,12 @@ public class AuthController {
 	private final UserService userService;
 	private final AuthenticationManager authenticationManager;
 	private final JwtUtils jwtUtils;
+	private final UserDetailsService userDetailsService;
 
 
 
 	@PostMapping("login")
-	public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<AuthResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
@@ -49,40 +58,50 @@ public class AuthController {
 		ResponseCookie accessCookie = jwtUtils.generateAccessCookie(email);
 		ResponseCookie refreshCookie = jwtUtils.generateRefreshCookie(email);
 
-		List<String> roles = userDetails.getAuthorities().stream()
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.SET_COOKIE, accessCookie.toString());
+		headers.add(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
+		String role = userDetails.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
-				.collect(Collectors.toList());
+				.findFirst()
+				.orElseThrow(()-> new NoRoleFoundException("NO ROLE ERROR"));
 
 		return ResponseEntity.ok()
-				.header(HttpHeaders.SET_COOKIE, accessCookie.toString())
-				.header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-				.body(new LoginResponse(
+				.headers(headers)
+				.body(new AuthResponse(
 						userDetails.getUsername(),
-						roles));
+						role));
 	}
 
 
 	@PostMapping("refresh")
-	public ResponseEntity<LoginResponse> refresh(HttpServletRequest request) {
+	public ResponseEntity<AuthResponse> refresh(HttpServletRequest request) {
 		String refreshToken = jwtUtils.getRefreshTokenFromCookie(request);
 
-		if(jwtUtils.isRefreshToken(refreshToken) && !jwtUtils.isTokenExpired(refreshToken)){
-			UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(refreshToken != null && jwtUtils.isRefreshToken(refreshToken) && !jwtUtils.isTokenExpired(refreshToken)){
 
-			String email = userDetails.getUsername();
+			String email = jwtUtils.getEmail(refreshToken);
+
+			UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
 			ResponseCookie accessCookie = jwtUtils.generateAccessCookie(email);
 			ResponseCookie refreshCookie = jwtUtils.generateRefreshCookie(email);
 
-			List<String> roles = userDetails.getAuthorities().stream()
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.SET_COOKIE, accessCookie.toString());
+			headers.add(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
+			String role = userDetails.getAuthorities().stream()
 					.map(GrantedAuthority::getAuthority)
-					.collect(Collectors.toList());
+					.findFirst()
+					.orElseThrow(()-> new NoRoleFoundException("NO ROLE ERROR"));
 
 			return ResponseEntity.ok()
-					.header(HttpHeaders.SET_COOKIE, accessCookie.toString())
-					.header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-					.body(new LoginResponse(
+					.headers(headers)
+					.body(new AuthResponse(
 							userDetails.getUsername(),
-							roles));
+							role));
 		}
 
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -97,12 +116,30 @@ public class AuthController {
 				userService.findByEmail(username)
 		);
 
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.SET_COOKIE, accessCookie.toString());
+		headers.add(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
+
 		SecurityContextHolder.clearContext();
 
 		return ResponseEntity.ok()
-				.header(HttpHeaders.SET_COOKIE, accessCookie.toString())
-				.header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+				.headers(headers)
 				.build();
+
+	}
+
+	@GetMapping("current-user")
+	public ResponseEntity<AuthResponse> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails){
+
+		String email = userDetails.getUsername();
+		String role = userDetails.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.findFirst()
+				.orElseThrow(()-> new NoRoleFoundException("NO ROLE ERROR"));
+
+		return ResponseEntity.ok(new AuthResponse(email, role));
+
 
 	}
 
