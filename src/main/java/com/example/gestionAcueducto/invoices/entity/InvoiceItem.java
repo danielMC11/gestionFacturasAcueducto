@@ -3,8 +3,6 @@ package com.example.gestionAcueducto.invoices.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 
@@ -26,7 +24,7 @@ public class InvoiceItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_detail_id")
-    private ServiceDetail serviceDetail;
+    private Fee fee;
 
     @Column(nullable = false)
     private Integer quantity;

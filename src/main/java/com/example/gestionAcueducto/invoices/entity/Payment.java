@@ -1,4 +1,4 @@
-package com.example.gestionAcueducto.payments.entity;
+package com.example.gestionAcueducto.invoices.entity;
 
 
 import jakarta.persistence.*;
@@ -8,7 +8,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
@@ -31,12 +30,8 @@ public class Payment {
     private LocalDateTime paymentDateTime;
 
     @ManyToOne
-    @JoinColumn(name = "payment_method_id")
-    private PaymentMethod paymentMethod;
-
-    @ManyToOne
-    @JoinColumn(name = "invoiced_user_id")
-    private InvoicedUser invoicedUser;
+    @JoinColumn(name = "invoice_id")
+    private Invoice invoice;
 
     @CreatedDate
     private LocalDateTime createdDate;

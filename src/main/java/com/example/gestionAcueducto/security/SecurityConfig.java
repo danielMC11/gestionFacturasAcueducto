@@ -23,7 +23,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
 
 	private final String[] WHITE_LIST_URL = {"/api/v1/auth/login",
-			"/api/v1/auth/refresh"};
+			"/api/v1/forgot-password", "/api/v1/reset-password",
+			"/api/v1/auth/refresh", "/api/v1/users/register-owner"};
 	private final CustomUnauthorizedHandler customUnauthorizedHandler;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final AuthenticationProvider authenticationProvider;

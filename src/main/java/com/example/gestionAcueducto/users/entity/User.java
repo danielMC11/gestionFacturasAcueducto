@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.example.gestionAcueducto.users.enums.Role;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,8 +53,7 @@ public class User implements UserDetails {
 	@Column(length = 15)
 	private String phoneNumber;
 
-	@OneToOne
-	@JoinColumn(name = "role_id")
+	@Enumerated(EnumType.STRING)
 	private Role role;
 
 	@Builder.Default
@@ -69,7 +69,7 @@ public class User implements UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 
 		return  new ArrayList<SimpleGrantedAuthority>(
-				List.of(new SimpleGrantedAuthority("ROLE_" + role.getRoleName().name()))
+				List.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
 		);
 
 	}

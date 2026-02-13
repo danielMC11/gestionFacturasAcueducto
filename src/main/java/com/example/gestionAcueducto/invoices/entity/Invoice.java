@@ -1,7 +1,7 @@
 package com.example.gestionAcueducto.invoices.entity;
 
 
-import com.example.gestionAcueducto.users.entity.User;
+import com.example.gestionAcueducto.invoices.enums.InvoiceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Builder
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE invoices SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Table(name = "invoices")
 @EntityListeners(AuditingEntityListener.class)
@@ -34,23 +35,21 @@ public class Invoice {
     @Column(nullable = false)
     private Integer consecutiveNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invoice_issuer_id")
-    private InvoiceIssuer invoiceIssuer;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "operation_type_id")
-    private OperationType operationType;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "negotiation_type_id")
-    private NegotiationType negotiationType;
-
     @Column(nullable = false)
     private LocalDate expirationDate;
 
     @Column(nullable = false)
     private BigDecimal paymentTotal;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private InvoiceStatus status;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "invoice")
+    private List<InvoiceItem> invoiceItems;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "invoice")
+    private List<Payment> payments;
 
     private boolean deleted = Boolean.FALSE;
 
@@ -59,6 +58,5 @@ public class Invoice {
 
     @LastModifiedDate
     private LocalDateTime modifiedDate;
-
 
 }

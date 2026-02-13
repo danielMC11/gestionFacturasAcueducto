@@ -1,11 +1,11 @@
 package com.example.gestionAcueducto.users.service.Impl;
 
 
-import com.example.gestionAcueducto.users.enums.RoleName;
+import com.example.gestionAcueducto.users.enums.Role;
 import com.example.gestionAcueducto.users.dto.UserDTO;
 import com.example.gestionAcueducto.users.entity.User;
 import com.example.gestionAcueducto.users.events.UserCreatedEvent;
-import com.example.gestionAcueducto.users.service.RoleService;
+import com.example.gestionAcueducto.users.repository.projections.UserProjection;
 import com.example.gestionAcueducto.users.service.UserService;
 import com.example.gestionAcueducto.exceptions.domain.DuplicateResourceException;
 import com.example.gestionAcueducto.exceptions.domain.NotFoundException;
@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
 	private UserRepository userRepository;
-	private RoleService roleService;
 	private PasswordEncoder passwordEncoder;
 	private PasswordGenerator passwordGenerator;
 	private UserMapper userMapper;
@@ -36,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public UserDTO createUser(UserDTO userDTO, RoleName roleName){
+	public UserDTO createUser(UserDTO userDTO, Role role){
 
 		userRepository.findByEmail(userDTO.email()).ifPresent(
 				existingUser -> {
@@ -53,12 +52,12 @@ public class UserServiceImpl implements UserService {
 						.email(userDTO.email())
 					.address(userDTO.address())
 					.phoneNumber(userDTO.phoneNumber())
-					.role(roleService.findByRoleName(roleName))
+					.role(role)
 					.password(passwordEncoder.encode(passwordGenerator.generateRandomPassword()))
 					.build()
 			);
 
-		eventPublisher.publishEvent(new UserCreatedEvent(this, user));
+		//eventPublisher.publishEvent(new UserCreatedEvent(this, user));
 
 		return userMapper.entityToDto(user);
 	}
@@ -107,9 +106,10 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public Page<UserDTO> findAll(Pageable pageable){
-		return userRepository.findAll(pageable)
-				.map(userMapper::entityToDto);
+	public Page<UserDTO> findAllSummary(Pageable pageable) {
+
+		return userRepository.findAllSummary(pageable)
+				.map(userMapper::projectionToDto);
 	}
 
 

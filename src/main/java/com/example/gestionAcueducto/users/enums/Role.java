@@ -1,7 +1,7 @@
 package com.example.gestionAcueducto.users.enums;
 
-public enum RoleName {
+public enum Role {
     OWNER,
     ADMIN,
-    CLIENT
+    SUBSCRIBER
 }
