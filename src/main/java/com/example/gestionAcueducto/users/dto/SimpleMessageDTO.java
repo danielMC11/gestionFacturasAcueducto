@@ -1,4 +1,4 @@
-package com.example.gestionAcueducto.auth.dto;
+package com.example.gestionAcueducto.users.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

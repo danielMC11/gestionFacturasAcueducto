@@ -1,10 +1,10 @@
-package com.example.gestionAcueducto.auth.controller;
+package com.example.gestionAcueducto.users.controller;
 
-import com.example.gestionAcueducto.auth.dto.SimpleMessageDTO;
-import com.example.gestionAcueducto.auth.dto.PasswordResetRequest;
-import com.example.gestionAcueducto.auth.entity.PasswordResetToken;
+import com.example.gestionAcueducto.users.dto.SimpleMessageDTO;
+import com.example.gestionAcueducto.users.dto.PasswordResetRequest;
+import com.example.gestionAcueducto.users.entity.PasswordResetToken;
 import com.example.gestionAcueducto.users.entity.User;
-import com.example.gestionAcueducto.auth.service.PasswordResetTokenService;
+import com.example.gestionAcueducto.users.service.PasswordResetTokenService;
 import com.example.gestionAcueducto.exceptions.domain.TokenExpiredException;
 import com.example.gestionAcueducto.users.service.UserService;
 import jakarta.validation.Valid;

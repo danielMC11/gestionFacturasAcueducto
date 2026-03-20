@@ -1,8 +1,8 @@
-package com.example.gestionAcueducto.users.events.listener;
+package com.example.gestionAcueducto.users.listener;
 
-import com.example.gestionAcueducto.auth.service.EmailService;
-import com.example.gestionAcueducto.auth.service.PasswordResetTokenService;
-import com.example.gestionAcueducto.users.events.UserCreatedEvent;
+import com.example.gestionAcueducto.email.service.EmailService;
+import com.example.gestionAcueducto.users.service.PasswordResetTokenService;
+import com.example.gestionAcueducto.users.UserCreatedEvent;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

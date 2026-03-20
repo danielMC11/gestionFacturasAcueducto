@@ -5,6 +5,8 @@ import com.example.gestionAcueducto.validator.groups.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 
+import java.time.LocalDateTime;
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record UserDTO(
@@ -36,6 +38,12 @@ public record UserDTO(
 	@NotBlank(groups = {OnCreate.class, OnPutSingleUpdate.class}, message = "EL NÚMERO DE CELULAR ES REQUERIDO")
 	@Size(min=10, max=10, message = "EL NÚMERO DE CELULAR DEBE CONTENER EXACTAMENTE 10 DIGITOS")
 	@Pattern(regexp = "^(3[0-2])[0-9]{8}$", message = "NÚMERO DE CELULAR INVALIDO")
-	String phoneNumber
+	String phoneNumber,
 
-){}
+	@Null(groups = {OnCreate.class, OnPutSingleUpdate.class}, message = "La fecha de creación no debe ser enviado en esta operación")
+	String createdDate,
+
+	@Null(groups = {OnCreate.class, OnPutSingleUpdate.class}, message = "La fecha de modificación no debe ser enviado en esta operación")
+	String lastModifiedDate
+
+	){}

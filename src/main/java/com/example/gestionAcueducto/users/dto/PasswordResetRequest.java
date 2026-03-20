@@ -1,13 +1,9 @@
-package com.example.gestionAcueducto.auth.dto;
+package com.example.gestionAcueducto.users.dto;
 
 
 import com.example.gestionAcueducto.validator.PasswordConfirmation;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 
 
 @PasswordConfirmation(password = "password", confirmPassword = "confirmPassword")

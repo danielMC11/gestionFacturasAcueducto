@@ -1,7 +1,7 @@
-package com.example.gestionAcueducto.auth.service.Impl;
+package com.example.gestionAcueducto.email.service.impl;
 
 
-import com.example.gestionAcueducto.auth.service.EmailService;
+import com.example.gestionAcueducto.email.service.EmailService;
 import com.example.gestionAcueducto.exceptions.domain.EmailSendException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;

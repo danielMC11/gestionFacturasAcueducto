@@ -1,6 +1,5 @@
-package com.example.gestionAcueducto.auth.entity;
+package com.example.gestionAcueducto.users.entity;
 
-import com.example.gestionAcueducto.users.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 

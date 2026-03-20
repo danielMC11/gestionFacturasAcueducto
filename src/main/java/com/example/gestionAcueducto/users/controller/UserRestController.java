@@ -6,7 +6,7 @@ import com.example.gestionAcueducto.users.service.UserService;
 import com.example.gestionAcueducto.users.dto.UserDTO;
 
 import com.example.gestionAcueducto.validator.groups.OnCreate;
-import com.example.gestionAcueducto.validator.groups.OnPatchSingleUpdate;
+import com.example.gestionAcueducto.validator.groups.OnPutSingleUpdate;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -26,36 +26,43 @@ public class UserRestController {
 
     private final UserService userService;
 
-    @PostMapping("register-owner")
+    @PostMapping("owner/create")
     public ResponseEntity<UserDTO> createOwner(@Valid @RequestBody UserDTO userDTO){
         return ResponseEntity.ok(userService.createUser(userDTO, Role.OWNER));
     }
 
-    @PostMapping("register-admin")
+    @PostMapping("admin/create")
     public ResponseEntity<UserDTO> createAdmin(@Valid @RequestBody UserDTO userDTO){
         return ResponseEntity.ok(userService.createUser(userDTO, Role.ADMIN));
     }
 
-    @PostMapping("/subscribers/create")
+
+    @PostMapping("subscriber/create")
     public ResponseEntity<UserDTO> createSubscriber(@Validated(OnCreate.class) @RequestBody UserDTO userDTO){
         return ResponseEntity.ok(userService.createUser(userDTO, Role.SUBSCRIBER));
     }
 
-    @PatchMapping("update/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Validated(OnPatchSingleUpdate.class) @RequestBody UserDTO userDTO){
-        return ResponseEntity.ok(userService.updateUser(id, userDTO));
-    }
-
-    @DeleteMapping("delete/{id}")
-    public ResponseEntity<UserDTO> deleteUser(@PathVariable Long id){
+    @DeleteMapping("subscriber/delete/{id}")
+    public ResponseEntity<UserDTO> deactivateSubscriber(@PathVariable Long id){
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/subscribers/list-all")
-    public PagedModel<UserDTO> findAllSummary(@PageableDefault(page = 0, size = 20, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable){
+    @PutMapping("subscriber/update/{id}")
+    public ResponseEntity<UserDTO> updateSubscriber(@PathVariable Long id, @Validated(OnPutSingleUpdate.class) @RequestBody UserDTO userDTO){
+        return ResponseEntity.ok(userService.updateUser(id, userDTO));
+    }
+
+    @GetMapping("subscriber/list-all")
+    public PagedModel<UserDTO> findAllSubscribersSummary(@PageableDefault(page = 0, size = 20, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable){
         return new PagedModel<>(userService.findAllSummary(pageable));
     }
+
+    @GetMapping("subscriber/{id}")
+    public ResponseEntity<UserDTO> findSubscriberById(@PathVariable Long id){
+        return ResponseEntity.ok(userService.findById(id));
+    }
+
 
 
 }

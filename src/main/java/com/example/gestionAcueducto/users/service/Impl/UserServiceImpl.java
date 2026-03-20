@@ -4,8 +4,6 @@ package com.example.gestionAcueducto.users.service.Impl;
 import com.example.gestionAcueducto.users.enums.Role;
 import com.example.gestionAcueducto.users.dto.UserDTO;
 import com.example.gestionAcueducto.users.entity.User;
-import com.example.gestionAcueducto.users.events.UserCreatedEvent;
-import com.example.gestionAcueducto.users.repository.projections.UserProjection;
 import com.example.gestionAcueducto.users.service.UserService;
 import com.example.gestionAcueducto.exceptions.domain.DuplicateResourceException;
 import com.example.gestionAcueducto.exceptions.domain.NotFoundException;
@@ -64,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDTO updateUser(Long id, UserDTO userDTO) {
-		User user = findById(id);
+		User user = findUserById(id);
 
 		userMapper.updateEntityFromDto(userDTO, user);
 
@@ -79,8 +77,8 @@ public class UserServiceImpl implements UserService {
 		userRepository.deleteById(id);
 	}
 
-	@Override
-	public User findById(Long id){
+
+	private User findUserById(Long id){
 		return userRepository.findById(id).orElseThrow(()-> {
 			String errorMessage = String.format("Error al obtener el usuario por ID: '%s'", id);
 			return new NotFoundException(errorMessage);
@@ -112,5 +110,8 @@ public class UserServiceImpl implements UserService {
 				.map(userMapper::projectionToDto);
 	}
 
-
+	@Override
+	public UserDTO findById(Long id) {
+		return userMapper.entityToDto(findUserById(id));
+	}
 }

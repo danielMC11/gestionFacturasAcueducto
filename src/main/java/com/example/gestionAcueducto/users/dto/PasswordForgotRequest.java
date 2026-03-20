@@ -1,15 +1,8 @@
-package com.example.gestionAcueducto.auth.dto;
+package com.example.gestionAcueducto.users.dto;
 
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-
 
 
 public record PasswordForgotRequest(

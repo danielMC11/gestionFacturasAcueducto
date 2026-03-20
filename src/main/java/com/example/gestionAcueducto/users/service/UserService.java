@@ -14,12 +14,13 @@ public interface UserService {
 
 	void deleteUser(Long id);
 
-	User findById(Long id);
-
 	User findByEmail(String email);
 
 	void updatePassword(String newPassword, Long userId);
 
 	Page<UserDTO> findAllSummary(Pageable pageable);
+
+		UserDTO findById(Long id);
+
 
 }

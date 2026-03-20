@@ -1,8 +1,8 @@
 package com.example.gestionAcueducto.security.jwt;
 
-import com.example.gestionAcueducto.auth.entity.RefreshToken;
+import com.example.gestionAcueducto.users.entity.RefreshToken;
 import com.example.gestionAcueducto.users.entity.User;
-import com.example.gestionAcueducto.auth.repository.RefreshTokenRepository;
+import com.example.gestionAcueducto.users.repository.RefreshTokenRepository;
 import com.example.gestionAcueducto.users.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;

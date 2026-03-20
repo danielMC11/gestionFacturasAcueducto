@@ -1,4 +1,4 @@
-package com.example.gestionAcueducto.users.events;
+package com.example.gestionAcueducto.users;
 
 import com.example.gestionAcueducto.users.entity.User;
 import org.springframework.context.ApplicationEvent;

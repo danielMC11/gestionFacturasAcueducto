@@ -1,4 +1,4 @@
-package com.example.gestionAcueducto.auth.service;
+package com.example.gestionAcueducto.email.service;
 
 public interface EmailService {
 

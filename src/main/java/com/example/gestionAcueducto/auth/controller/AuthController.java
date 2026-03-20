@@ -1,13 +1,9 @@
-package com.example.gestionAcueducto.auth.controller;
+package com.example.gestionAcueducto.auth.internal.controller;
 
 import com.example.gestionAcueducto.auth.dto.LoginRequest;
 import com.example.gestionAcueducto.auth.dto.AuthResponse;
 import com.example.gestionAcueducto.exceptions.domain.NoRoleFoundException;
-import com.example.gestionAcueducto.exceptions.domain.NotFoundException;
 import com.example.gestionAcueducto.security.jwt.JwtUtils;
-import com.example.gestionAcueducto.users.dto.UserDTO;
-import com.example.gestionAcueducto.users.entity.User;
-import com.example.gestionAcueducto.users.mapper.UserMapper;
 import com.example.gestionAcueducto.users.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -24,12 +20,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 
 @RequestMapping("/api/v1/auth")

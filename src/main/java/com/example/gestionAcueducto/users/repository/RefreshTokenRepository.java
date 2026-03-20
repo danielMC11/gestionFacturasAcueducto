@@ -1,6 +1,6 @@
-package com.example.gestionAcueducto.auth.repository;
+package com.example.gestionAcueducto.users.repository;
 
-import com.example.gestionAcueducto.auth.entity.RefreshToken;
+import com.example.gestionAcueducto.users.entity.RefreshToken;
 import com.example.gestionAcueducto.users.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

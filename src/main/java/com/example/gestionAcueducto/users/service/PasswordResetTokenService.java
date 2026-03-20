@@ -1,6 +1,6 @@
-package com.example.gestionAcueducto.auth.service;
+package com.example.gestionAcueducto.users.service;
 
-import com.example.gestionAcueducto.auth.entity.PasswordResetToken;
+import com.example.gestionAcueducto.users.entity.PasswordResetToken;
 import com.example.gestionAcueducto.users.entity.User;
 
 public interface PasswordResetTokenService {

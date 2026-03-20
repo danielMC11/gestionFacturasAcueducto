@@ -1,11 +1,11 @@
-package com.example.gestionAcueducto.auth.service.Impl;
+package com.example.gestionAcueducto.users.service.Impl;
 
-import com.example.gestionAcueducto.auth.entity.PasswordResetToken;
+import com.example.gestionAcueducto.users.entity.PasswordResetToken;
 import com.example.gestionAcueducto.users.entity.User;
 
-import com.example.gestionAcueducto.auth.service.PasswordResetTokenService;
+import com.example.gestionAcueducto.users.service.PasswordResetTokenService;
 import com.example.gestionAcueducto.exceptions.domain.NotFoundException;
-import com.example.gestionAcueducto.auth.repository.PasswordResetTokenRepository;
+import com.example.gestionAcueducto.users.repository.PasswordResetTokenRepository;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

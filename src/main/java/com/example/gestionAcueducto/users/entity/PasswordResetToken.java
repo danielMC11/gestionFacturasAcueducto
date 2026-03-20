@@ -1,6 +1,6 @@
-package com.example.gestionAcueducto.auth.entity;
+package com.example.gestionAcueducto.users.entity;
 
-import com.example.gestionAcueducto.users.entity.User;
+import com.example.gestionAcueducto.users.enums.EmailStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +23,14 @@ public class PasswordResetToken {
 	@OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
 	@JoinColumn(nullable = false, name = "user_id")
 	private User user;
+
+	@Column(name = "saga_id")
+	private String sagaId;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "email_status")
+	private EmailStatus emailStatus;
+
 
 	@Column(nullable = false)
 	private LocalDateTime expirationDate;
