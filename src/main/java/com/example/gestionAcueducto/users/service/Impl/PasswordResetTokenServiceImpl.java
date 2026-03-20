@@ -3,6 +3,7 @@ package com.example.gestionAcueducto.users.service.Impl;
 import com.example.gestionAcueducto.users.entity.PasswordResetToken;
 import com.example.gestionAcueducto.users.entity.User;
 
+import com.example.gestionAcueducto.users.enums.EmailStatus;
 import com.example.gestionAcueducto.users.service.PasswordResetTokenService;
 import com.example.gestionAcueducto.exceptions.domain.NotFoundException;
 import com.example.gestionAcueducto.users.repository.PasswordResetTokenRepository;
@@ -19,16 +20,17 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 	private PasswordResetTokenRepository passwordResetTokenRepository;
 
 
-	public String createTokenForUser(User user, int minutes) {
+	public PasswordResetToken createPasswordResetToken(User user, int minutes) {
 
-			PasswordResetToken passwordResetToken = passwordResetTokenRepository.save(
+			return passwordResetTokenRepository.save(
 				PasswordResetToken.builder()
-					.user(user)
-					.token(UUID.randomUUID().toString())
-					.expirationDate(LocalDateTime.now().plusMinutes(minutes))
+                        .user(user)
+                        .token(UUID.randomUUID().toString())
+                        .expirationDate(LocalDateTime.now().plusMinutes(minutes))
+                        .sagaId(UUID.randomUUID().toString())
+                        .emailStatus(EmailStatus.PENDING)
 					.build()
 			);
-			return passwordResetToken.getToken();
 	}
 
 

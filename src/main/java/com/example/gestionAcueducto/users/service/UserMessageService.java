@@ -4,7 +4,7 @@ import com.example.gestionAcueducto.events.ResetPasswordRequestEvent;
 
 public interface UserMessageService {
 
-    void sendResetPasswordEmail(ResetPasswordRequestEvent event);
+    void publishResetPasswordEvent(ResetPasswordRequestEvent event);
 
 
 }

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-
 @Service
 @RequiredArgsConstructor
 public class PasswordForgotServiceImpl implements PasswordForgotService {
@@ -30,21 +29,30 @@ public class PasswordForgotServiceImpl implements PasswordForgotService {
 
         User user = userService.findByEmail(passwordForgotRequest.email());
 
-        PasswordResetToken passwordResetToken = passwordResetTokenService.findByUser(user);
+        PasswordResetToken passwordResetToken;
+        passwordResetToken = passwordResetTokenService.findByUser(user);
 
         if(passwordResetToken != null){
 
             if(!passwordResetTokenService.isTokenExpired(passwordResetToken)){
-                //emailServiceImpl.sendResetPasswordEmail(user.getEmail(), "reset-password-email",passwordResetToken.getToken());
+
+                ResetPasswordRequestEvent resetPasswordRequestEvent = new ResetPasswordRequestEvent( passwordResetToken.getSagaId(),
+                        user.getEmail(), "reset-password-email", passwordResetToken.getToken());
+
+                userMessageService.publishResetPasswordEvent(resetPasswordRequestEvent);
+
                 return new SimpleMessageDTO("Se ha reenviado el correo exitosamente!");
             }
             passwordResetTokenService.deleteToken(passwordResetToken);
         }
 
-        String token = passwordResetTokenService.createTokenForUser(user, 5);
+        passwordResetToken = passwordResetTokenService.createPasswordResetToken(user, 5);
 
-        ResetPasswordRequestEvent resetPasswordRequestEvent = new ResetPasswordRequestEvent(user.getEmail(), "reset-password-email", token);
-        userMessageService.sendResetPasswordEmail(resetPasswordRequestEvent);
+
+        ResetPasswordRequestEvent resetPasswordRequestEvent = new ResetPasswordRequestEvent( passwordResetToken.getSagaId(),
+                user.getEmail(), "reset-password-email", passwordResetToken.getToken());
+
+        userMessageService.publishResetPasswordEvent(resetPasswordRequestEvent);
 
         return new SimpleMessageDTO("Se ha generado un nuevo correo de recuperación exitosamente!");
 

@@ -1,6 +1,7 @@
 package com.example.gestionAcueducto.users.service.Impl;
 
 import com.example.gestionAcueducto.events.ResetPasswordRequestEvent;
+import com.example.gestionAcueducto.events.ResetPasswordResponseEvent;
 import com.example.gestionAcueducto.users.service.UserMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class UserMessageServiceImpl implements UserMessageService {
 
 
     @Override
-    public void sendResetPasswordEmail(ResetPasswordRequestEvent event) {
+    public void publishResetPasswordEvent(ResetPasswordRequestEvent event) {
 
         rabbitTemplate.convertAndSend(exchange, routingKey, event);
 
@@ -33,7 +34,7 @@ public class UserMessageServiceImpl implements UserMessageService {
     }
 
     @RabbitListener
-    public void onResetPasswordResponse(){
+    public void onResetPasswordResponse(ResetPasswordResponseEvent event){
 
     }
 
