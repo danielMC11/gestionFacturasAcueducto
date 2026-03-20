@@ -32,6 +32,9 @@ public class RabbitMQConfig {
     }
 
 
+
+
+
     @Bean
     public Binding bindPasswordResetResponse(Queue passwordResetResponseQueue, DirectExchange emailExchange) {
         return BindingBuilder
