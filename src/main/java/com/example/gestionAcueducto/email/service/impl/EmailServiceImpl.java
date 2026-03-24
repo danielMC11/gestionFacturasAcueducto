@@ -1,7 +1,10 @@
 package com.example.gestionAcueducto.email.service.impl;
 
 
+import com.example.gestionAcueducto.email.messaging.publishers.EmailPublisher;
 import com.example.gestionAcueducto.email.service.EmailService;
+import com.example.gestionAcueducto.events.email.PasswordUpdateEmailFailedEvent;
+import com.example.gestionAcueducto.events.email.PasswordUpdateEmailSentEvent;
 import com.example.gestionAcueducto.exceptions.domain.EmailSendException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
@@ -14,6 +17,7 @@ import org.thymeleaf.TemplateEngine;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 
 @AllArgsConstructor
@@ -24,8 +28,10 @@ public class EmailServiceImpl implements EmailService {
 
 	private final TemplateEngine templateEngine;
 
+	private final EmailPublisher emailPublisher;
 
-	public void sendResetPasswordEmail(String email, String templateName, String token){
+
+	public void sendResetPasswordEmail(UUID sagaId, String email, String templateName, String token){
 		try {
 			MimeMessage message = emailSender.createMimeMessage();
 
@@ -46,7 +52,11 @@ public class EmailServiceImpl implements EmailService {
 			helper.setText(html, true);
 
 			emailSender.send(message);
+
+			emailPublisher.publishPasswordUpdateEmailSentEvent(new PasswordUpdateEmailSentEvent(sagaId));
+
 		} catch (Exception e){
+			emailPublisher.publishPasswordUpdateEmailFailedEvent(new PasswordUpdateEmailFailedEvent(sagaId, e.getMessage()));
 			throw new EmailSendException("Error al enviar correo", e);
 		}
 	}

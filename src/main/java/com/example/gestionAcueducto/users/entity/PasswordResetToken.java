@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Builder
 @Getter
@@ -25,7 +26,7 @@ public class PasswordResetToken {
 	private User user;
 
 	@Column(name = "saga_id")
-	private String sagaId;
+	private UUID sagaId;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "email_status")

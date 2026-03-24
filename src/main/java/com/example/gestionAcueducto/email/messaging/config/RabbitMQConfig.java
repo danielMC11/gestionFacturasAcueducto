@@ -1,9 +1,7 @@
-package com.example.gestionAcueducto.email.config;
+package com.example.gestionAcueducto.email.messaging.config;
 
 
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,16 +25,16 @@ public class RabbitMQConfig {
 
 
     @Bean
-    public Queue passwordResetRequestQueue() {
+    public Queue passwordUpdateRequestQueue() {
         return QueueBuilder.durable(queue)
                 .build();
     }
 
 
     @Bean
-    public Binding bindPasswordResetRequest(Queue passwordResetRequestQueue, DirectExchange emailExchange) {
+    public Binding bindPasswordUpdateRequest(Queue passwordUpdateRequestQueue, DirectExchange emailExchange) {
         return BindingBuilder
-                .bind(passwordResetRequestQueue)
+                .bind(passwordUpdateRequestQueue)
                 .to(emailExchange)
                 .with(routingKey); // Los mensajes enviados con esta clave llegarán a esta cola
     }

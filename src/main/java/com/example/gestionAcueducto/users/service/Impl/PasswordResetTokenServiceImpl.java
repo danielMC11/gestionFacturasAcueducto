@@ -1,36 +1,56 @@
 package com.example.gestionAcueducto.users.service.Impl;
 
+import com.example.gestionAcueducto.events.users.PasswordUpdateRequestedEvent;
 import com.example.gestionAcueducto.users.entity.PasswordResetToken;
 import com.example.gestionAcueducto.users.entity.User;
 
 import com.example.gestionAcueducto.users.enums.EmailStatus;
+import com.example.gestionAcueducto.users.messaging.publishers.PasswordResetPublisher;
 import com.example.gestionAcueducto.users.service.PasswordResetTokenService;
 import com.example.gestionAcueducto.exceptions.domain.NotFoundException;
 import com.example.gestionAcueducto.users.repository.PasswordResetTokenRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
-	private PasswordResetTokenRepository passwordResetTokenRepository;
+	private final PasswordResetTokenRepository passwordResetTokenRepository;
+	private final PasswordResetPublisher passwordResetPublisher;
 
+	public void createPasswordResetToken(User user, int minutes) {
 
-	public PasswordResetToken createPasswordResetToken(User user, int minutes) {
+			UUID sagaId = UUID.randomUUID();
 
-			return passwordResetTokenRepository.save(
+			PasswordResetToken passwordResetToken = passwordResetTokenRepository.save(
 				PasswordResetToken.builder()
                         .user(user)
                         .token(UUID.randomUUID().toString())
                         .expirationDate(LocalDateTime.now().plusMinutes(minutes))
-                        .sagaId(UUID.randomUUID().toString())
+                        .sagaId(sagaId)
                         .emailStatus(EmailStatus.PENDING)
 					.build()
 			);
+
+
+			PasswordUpdateRequestedEvent passwordUpdateRequestedEvent = new PasswordUpdateRequestedEvent( passwordResetToken.getSagaId(),
+					user.getEmail(), "reset-password-email", passwordResetToken.getToken());
+
+			passwordResetPublisher.publishPasswordUpdateRequestedEvent(passwordUpdateRequestedEvent);
+	}
+
+	public void updatePasswordResetTokenStatus(UUID sagaId, EmailStatus emailStatus) {
+		PasswordResetToken passwordResetToken = passwordResetTokenRepository.findBySagaId(sagaId).orElseThrow(
+				() -> new NotFoundException("Password reset token not found")
+		);
+
+		passwordResetToken.setEmailStatus(emailStatus);
+
+		passwordResetTokenRepository.save(passwordResetToken);
 	}
 
 
