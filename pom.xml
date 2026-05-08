@@ -8,11 +8,11 @@
 		<version>3.3.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
+	<groupId>com.altamira</groupId>
 	<artifactId>gestionAcueducto</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<name>gestionAcueducto</name>
-	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -20,6 +20,14 @@
 	<developers>
 		<developer/>
 	</developers>
+	<modules>
+		<module>auth</module>
+		<module>users</module>
+		<module>email</module>
+		<module>common</module>
+		<module>invoices</module>
+		<module>main</module>
+	</modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
@@ -149,10 +157,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
